@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site Unblocker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState } = React;
+
+        function App() {
+            const [url, setUrl] = useState('');
+            const [iframeSrc, setIframeSrc] = useState('');
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                if (!url) {
+                    alert('Please enter a URL');
+                    return;
+                }
+                // Use a public CORS proxy to bypass restrictions
+                const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+                const fullUrl = url.startsWith('http') ? url : `https://${url}`;
+                setIframeSrc(`${proxyUrl}${fullUrl}`);
+            };
+
+            return (
+                <div className="flex justify-center p-4 min-h-screen">
+                    <div className="w-full max-w-4xl bg-white p-6 rounded-lg shadow-lg">
+                        <h1 className="text-3xl font-bold mb-4 text-center">Site Unblocker</h1>
+                        <p className="text-center text-gray-600 mb-4">
+                            Enter a URL to view the site. Note: Some sites may not load due to iframe restrictions.
+                        </p>
+                        <form onSubmit={handleSubmit} className="flex mb-4">
+                            <input
+                                type="text"
+                                value={url}
+                                onChange={(e) => setUrl(e.target.value)}
+                                placeholder="Enter URL (e.g., example.com)"
+                                className="flex-1 border p-2 rounded-l focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                            <button
+                                type="submit"
+                                className="bg-blue-500 text-white p-2 rounded-r hover:bg-blue-600"
+                            >
+                                Load Site
+                            </button>
+                        </form>
+                        {iframeSrc && (
+                            <iframe
+                                src={iframeSrc}
+                                className="w-full h-[600px] border rounded-lg"
+                                title="Unblocked Site"
+                                sandbox="allow-scripts allow-same-origin allow-popups"
+                            ></iframe>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
